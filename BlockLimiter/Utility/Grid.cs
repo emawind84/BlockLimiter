@@ -36,24 +36,21 @@ namespace BlockLimiter.Utility
             var gridType = grid.GridSizeEnum;
             var isStatic = grid.IsStatic;
 
-            if (BlockLimiterConfig.Instance.MaxBlockSizeShips > 0 && !isStatic && gridSize >= BlockLimiterConfig.Instance.MaxBlockSizeShips)
+            if (BlockLimiterConfig.Instance.MaxBlockSizeShips > 0 && !isStatic)
             {
-                return  true;
+                if (gridSize >= BlockLimiterConfig.Instance.MaxBlockSizeShips) return  true;
             }
-
-            if (BlockLimiterConfig.Instance.MaxBlockSizeStations > 0 && isStatic && gridSize >= BlockLimiterConfig.Instance.MaxBlockSizeStations)
+            else if (BlockLimiterConfig.Instance.MaxBlockSizeStations > 0 && isStatic)
             {
-                return  true;
+                if (gridSize >= BlockLimiterConfig.Instance.MaxBlockSizeStations) return  true;
             }
-
-            if (BlockLimiterConfig.Instance.MaxBlocksLargeGrid > 0 && gridType == MyCubeSize.Large && gridSize >= BlockLimiterConfig.Instance.MaxBlocksLargeGrid)
+            else if (BlockLimiterConfig.Instance.MaxBlocksLargeGrid > 0 && gridType == MyCubeSize.Large)
             {
-                return  true;
+                if (gridSize >= BlockLimiterConfig.Instance.MaxBlocksLargeGrid) return  true;
             }
-
-            if (BlockLimiterConfig.Instance.MaxBlocksSmallGrid > 0 && gridType == MyCubeSize.Small && gridSize >= BlockLimiterConfig.Instance.MaxBlocksSmallGrid)
+            else if (BlockLimiterConfig.Instance.MaxBlocksSmallGrid > 0 && gridType == MyCubeSize.Small)
             {
-                return  true;
+                if (gridSize >= BlockLimiterConfig.Instance.MaxBlocksSmallGrid) return  true;
             }
 
             return false;
@@ -64,37 +61,50 @@ namespace BlockLimiter.Utility
             count = 0;
             if (grid == null) return false;
 
-
             if (grid.EntityId > 0 && Utilities.IsExcepted(grid.EntityId, new List<string>()) || GridCache.GetOwners(grid).Any(x => Utilities.IsExcepted(x, new List<string>())))
                 return false;
 
             var gridSize = grid.CubeBlocks.Count;
             var gridType = grid.GridSizeEnum;
-            var isStatic = converting? !grid.IsStatic:grid.IsStatic;
+            var isStatic = converting ? !grid.IsStatic : grid.IsStatic;
 
-            if (BlockLimiterConfig.Instance.MaxBlockSizeShips > 0 && !isStatic && gridSize >= BlockLimiterConfig.Instance.MaxBlockSizeShips)
+            if (BlockLimiterConfig.Instance.MaxBlockSizeShips > 0 && !isStatic)
             {
-                count = Math.Abs(gridSize - BlockLimiterConfig.Instance.MaxBlockSizeShips);
-                return  true;
+                if (gridSize >= BlockLimiterConfig.Instance.MaxBlockSizeShips)
+                {
+                    count = Math.Abs(gridSize - BlockLimiterConfig.Instance.MaxBlockSizeShips);
+                    return true;
+                }
             }
 
-            if (BlockLimiterConfig.Instance.MaxBlockSizeStations > 0 && isStatic && gridSize >= BlockLimiterConfig.Instance.MaxBlockSizeStations)
+            else if (BlockLimiterConfig.Instance.MaxBlockSizeStations > 0 && isStatic)
             {
-                count = Math.Abs(gridSize - BlockLimiterConfig.Instance.MaxBlockSizeStations);
-                return  true;
+                if (gridSize >= BlockLimiterConfig.Instance.MaxBlockSizeStations)
+                {
+                    count = Math.Abs(gridSize - BlockLimiterConfig.Instance.MaxBlockSizeStations);
+                    return true;
+                }
             }
 
-            if (BlockLimiterConfig.Instance.MaxBlocksLargeGrid > 0 && gridType == MyCubeSize.Large && gridSize >= BlockLimiterConfig.Instance.MaxBlocksLargeGrid)
+            else if (BlockLimiterConfig.Instance.MaxBlocksLargeGrid > 0 && gridType == MyCubeSize.Large)
             {
-                count = Math.Abs(gridSize - BlockLimiterConfig.Instance.MaxBlocksLargeGrid);
-                return  true;
+                if (gridSize >= BlockLimiterConfig.Instance.MaxBlocksLargeGrid)
+                {
+                    count = Math.Abs(gridSize - BlockLimiterConfig.Instance.MaxBlocksLargeGrid);
+                    return true;
+                }
             }
 
-            if (BlockLimiterConfig.Instance.MaxBlocksSmallGrid <= 0 || gridType != MyCubeSize.Small ||
-                gridSize < BlockLimiterConfig.Instance.MaxBlocksSmallGrid) return false;
-            count = Math.Abs(gridSize - BlockLimiterConfig.Instance.MaxBlocksSmallGrid);
-            return  true;
+            else if (BlockLimiterConfig.Instance.MaxBlocksSmallGrid > 0 && gridType == MyCubeSize.Small)
+            {
+                if (gridSize < BlockLimiterConfig.Instance.MaxBlocksSmallGrid)
+                {
+                    count = Math.Abs(gridSize - BlockLimiterConfig.Instance.MaxBlocksSmallGrid);
+                    return true;
+                }
+            }
 
+            return false;
         }
 
         public static bool CanMerge(MyCubeGrid grid1, MyCubeGrid grid2, out List<string>blocks, out int count)
